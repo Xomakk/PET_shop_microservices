@@ -1,15 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-from microservices.AuthService.src.config import settings
 from api import routers
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI(title="Auth Service")
 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:3000"],
+    allow_origins=["http://127.0.0.1"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=[
@@ -23,12 +23,5 @@ app.add_middleware(
 )
 
 for router in routers:
-    app.include_router(routers)
+    app.include_router(router)
 
-if __name__ == "__main__":
-    uvicorn.run(
-        app,
-        port=settings.SERVICE_PORT,
-        workers=settings.WORKERS,
-        reload=settings.DEV_MODE,
-    )

@@ -13,13 +13,14 @@ from sqlalchemy.ext.asyncio import (
 from config import settings
 
 DATABASE_URL = settings.get_db_url()
+REDIS_URL = settings.get_redis_url()
 
 engine = create_async_engine(url=DATABASE_URL, echo=settings.DEV_MODE, pool_recycle=850)
 async_session_maker = async_sessionmaker(
     engine, class_=AsyncSession, expire_on_commit=False
 )
 
-# redis = aioredis.from_url(settings.REDIS_URL)
+redis = aioredis.from_url(REDIS_URL)
 
 
 class BaseModel(AsyncAttrs, DeclarativeBase):
@@ -37,7 +38,7 @@ class BaseModel(AsyncAttrs, DeclarativeBase):
 
 
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker as session:
+    async with async_session_maker() as session:
         yield session
 
 
